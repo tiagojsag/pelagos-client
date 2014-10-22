@@ -1,4 +1,4 @@
-define(["app/Class", "async", "app/Visualization/Shader", "app/Data/GeoProjection", "app/Data/DataView", "jQuery"], function(Class, async, Shader, GeoProjection, DataView, $) {
+define("app/Visualization/Animation/Animation", ["app/Class", "async", "app/Visualization/Shader", "app/Data/GeoProjection", "app/Data/DataView", "jQuery"], function(Class, async, Shader, GeoProjection, DataView, $) {
   var Animation = Class({
     name: "Animation",
     columns: {},
@@ -136,9 +136,12 @@ define(["app/Class", "async", "app/Visualization/Shader", "app/Data/GeoProjectio
       self.dataUpdateTimeout = undefined;
       self.dataUpdates++;
 
+      var start = performance.now();
       Object.values(self.programs).map(self.updateDataProgram.bind(self));
 
       self.manager.triggerUpdate();
+      var end = performance.now();
+      console.log("updateData: " + (end - start));
     },
 
     updateDataProgram: function (program) {
@@ -198,6 +201,7 @@ define(["app/Class", "async", "app/Visualization/Shader", "app/Data/GeoProjectio
 
       // Note: We never reaload an existing tile.
 
+      var start = performance.now();
       program.gl.useProgram(program);
 
       var dataViewArrayBuffers = program.dataViewArrayBuffers;
@@ -210,11 +214,18 @@ define(["app/Class", "async", "app/Visualization/Shader", "app/Data/GeoProjectio
           program.dataViewArrayBuffers[tile.content.url] = {};
 
           Object.keys(tile.content.header.colsByName).map(function (name) {
+            var start = performance.now();
             program.dataViewArrayBuffers[tile.content.url][name] = program.gl.createBuffer();
+            var middle = performance.now();
             Shader.programLoadArray(program.gl, program.dataViewArrayBuffers[tile.content.url][name], tile.content.data[name], program);
+            var end = performance.now();
+            console.log("loadDataViewArrayBuffers/createBuffer: " + (middle - start));
+            console.log("loadDataViewArrayBuffers/bufferData: " + (end - middle));
           });
         }
       });
+      var end = performance.now();
+      console.log("loadDataViewArrayBuffers: " + (end - start));
     },
 
     bindDataViewArrayBuffers: function(program, tile) {
