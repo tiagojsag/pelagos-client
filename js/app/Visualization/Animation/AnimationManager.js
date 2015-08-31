@@ -359,6 +359,10 @@ define(["app/Class", "app/Events", "app/Bounds", "app/ObjectTemplate", "async", 
       var dataView = animation.data_view;
       var type = selectionEvent.category;
 
+      if (dataView.selections.selections[type] && dataView.selections.selections[type].data.series) {
+        console.log({series:dataView.selections.selections[type].data.series[0]});
+      }
+
       if (type != 'selected' && type != 'info') return;
 
       if (   (selectionEvent.startidx == undefined || selectionEvent.endidx == undefined)

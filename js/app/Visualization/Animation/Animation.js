@@ -326,6 +326,9 @@ define(["app/Class", "async", "app/Visualization/Animation/Shader", "app/Data/Ge
     select: function (x, y, type, replace) {
       var self = this;
       var rowidx = self.getRowidxAtPos(x, y);
+      if (rowidx) {
+        console.log({x:x, y:y, tile:rowidx[0], row:rowidx[1]});
+      }
       self.data_view.selections.addSelectionRange(type, rowidx, rowidx, replace);
       return rowidx;
     },
