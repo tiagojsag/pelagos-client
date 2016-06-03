@@ -4,6 +4,7 @@ import click
 import _tileset
 import datetime
 
+
 class TimeType(click.ParamType):
     name = 'time'
 
@@ -13,8 +14,8 @@ class TimeType(click.ParamType):
         except ValueError:
             self.fail('%s is not a valid date' % value, param, ctx)
 
-TIME_TYPE = TimeType()
 
+TIME_TYPE = TimeType()
 
 
 @click.command()
@@ -38,6 +39,7 @@ TIME_TYPE = TimeType()
 @click.pass_context
 def main(ctx, outdir, levels=None, start=_tileset.EPOCH, extent=_tileset.DEFAULT_EXTENT, count=None):
     _tileset.generate_tileset(outdir, levels, start, extent, count)
+
 
 if __name__ == "__main__":
     main()

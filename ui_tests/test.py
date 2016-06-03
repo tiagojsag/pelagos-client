@@ -7,6 +7,7 @@ import time
 import os.path
 import json
 
+
 # To capture lat/lons of clicks, the following javascript can be used:
 
 # point2LatLng = function(point, map) {
@@ -44,7 +45,7 @@ class HomeTest(unittest.TestCase):
             return map.getProjection().fromPointToLatLng(worldPoint);
           }
         """)
-    
+
     def latLng2Point(self, latLng):
         driver = server.driver
         return json.loads(driver.execute_script("""
@@ -78,10 +79,12 @@ class HomeTest(unittest.TestCase):
 
     def getHover(self, point, animation):
         actions = ActionChains(server.driver)
-        actions.move_to_element_with_offset(server.driver.find_element_by_xpath("//div[@class='animations']/div/div/div[2]"), point['x'], point['y'])
+        actions.move_to_element_with_offset(
+            server.driver.find_element_by_xpath("//div[@class='animations']/div/div/div[2]"), point['x'], point['y'])
         actions.perform()
         time.sleep(1)
-        return server.driver.execute_script("return visualization.animations.animations.filter(function (animation) { return animation.name == '%s'; })[0].data_view.selections.selections.hover.data.seriesgroup[0]" % animation)
+        return server.driver.execute_script(
+            "return visualization.animations.animations.filter(function (animation) { return animation.name == '%s'; })[0].data_view.selections.selections.hover.data.seriesgroup[0]" % animation)
 
     def test_coord_conversion(self):
         driver = server.driver
@@ -108,7 +111,7 @@ class HomeTest(unittest.TestCase):
             self.setAnimation("ClusterAnimation")
 
             self.load_helpers()
-            point = self.latLng2Point({'lat':22.5, 'lng':0.0})
+            point = self.latLng2Point({'lat': 22.5, 'lng': 0.0})
 
             # Shift click is not supported by webdriver right now...
             driver.execute_script("""
@@ -117,11 +120,13 @@ class HomeTest(unittest.TestCase):
             """)
 
             actions = ActionChains(driver)
-            actions.move_to_element_with_offset(driver.find_element_by_xpath("//div[@class='animations']/div/div/div[2]"), point['x'], point['y'])
+            actions.move_to_element_with_offset(
+                driver.find_element_by_xpath("//div[@class='animations']/div/div/div[2]"), point['x'], point['y'])
             actions.click()
             actions.perform()
 
-            server.wait_for(lambda: not server.is_element_present('//div[@id="vessel_identifiers"]//table//td[@class="imo"]'))
+            server.wait_for(
+                lambda: not server.is_element_present('//div[@id="vessel_identifiers"]//table//td[@class="imo"]'))
             self.failUnless(server.is_element_present('//div[@id="vessel_identifiers"]//table//td[text()="27200"]'))
         except:
             name = os.path.realpath("ui_tests.test.test_home.png")
@@ -141,16 +146,18 @@ class HomeTest(unittest.TestCase):
 
             def moveTimeslider(offset):
                 actions = ActionChains(driver)
-                actions.drag_and_drop_by_offset(driver.find_element_by_xpath('//div[@class="Timeline timeline main-timeline"]//div[@class="window"]'), offset, 0)
+                actions.drag_and_drop_by_offset(driver.find_element_by_xpath(
+                    '//div[@class="Timeline timeline main-timeline"]//div[@class="window"]'), offset, 0)
                 actions.perform()
 
             server.wait_for(lambda: self.animationHasLoaded("ClusterAnimation"))
-            point = self.latLng2Point({'lat':22.5, 'lng':0.0})
+            point = self.latLng2Point({'lat': 22.5, 'lng': 0.0})
             self.assertEqual(self.getHover(point, "ClusterAnimation"), 27200, "Seriesgroup not present at x,y")
             moveTimeslider(-272)
             time.sleep(5)
             server.wait_for(lambda: self.animationHasLoaded("ClusterAnimation"))
-            self.assertNotEqual(self.getHover(point, "ClusterAnimation"), 27200, "Seriesgroup present at x,y when timeslider has moved")
+            self.assertNotEqual(self.getHover(point, "ClusterAnimation"), 27200,
+                                "Seriesgroup present at x,y when timeslider has moved")
 
         except:
             name = os.path.realpath("ui_tests.test.test_timeslider.png")
@@ -167,13 +174,25 @@ class HomeTest(unittest.TestCase):
             self.setAnimation("ClusterAnimation")
 
             def get_tiles():
-                tiles = driver.execute_script("return Object.keys(visualization.data.sources['TiledBinFormat|/ui_tests/data/testtiles/.'].source.wantedTiles)")
+                tiles = driver.execute_script(
+                    "return Object.keys(visualization.data.sources['TiledBinFormat|/ui_tests/data/testtiles/.'].source.wantedTiles)")
                 tiles.sort()
                 return tiles
 
             server.wait_for(lambda: self.animationHasLoaded("ClusterAnimation"))
-            
-            self.assertEqual(get_tiles(), [u'-22.5,-11.25,0,0', u'-22.5,-22.5,0,-11.25', u'-22.5,-33.75,0,-22.5', u'-22.5,0,0,11.25', u'-22.5,11.25,0,22.5', u'-22.5,22.5,0,33.75', u'-45,-11.25,-22.5,0', u'-45,-22.5,-22.5,-11.25', u'-45,-33.75,-22.5,-22.5', u'-45,0,-22.5,11.25', u'-45,11.25,-22.5,22.5', u'-45,22.5,-22.5,33.75', u'-67.5,-11.25,-45,0', u'-67.5,-22.5,-45,-11.25', u'-67.5,-33.75,-45,-22.5', u'-67.5,0,-45,11.25', u'-67.5,11.25,-45,22.5', u'-67.5,22.5,-45,33.75', u'0,-11.25,22.5,0', u'0,-22.5,22.5,-11.25', u'0,-33.75,22.5,-22.5', u'0,0,22.5,11.25', u'0,11.25,22.5,22.5', u'0,22.5,22.5,33.75', u'22.5,-11.25,45,0', u'22.5,-22.5,45,-11.25', u'22.5,-33.75,45,-22.5', u'22.5,0,45,11.25', u'22.5,11.25,45,22.5', u'22.5,22.5,45,33.75', u'45,-11.25,67.5,0', u'45,-22.5,67.5,-11.25', u'45,-33.75,67.5,-22.5', u'45,0,67.5,11.25', u'45,11.25,67.5,22.5', u'45,22.5,67.5,33.75'])
+
+            self.assertEqual(get_tiles(),
+                             [u'-22.5,-11.25,0,0', u'-22.5,-22.5,0,-11.25', u'-22.5,-33.75,0,-22.5', u'-22.5,0,0,11.25',
+                              u'-22.5,11.25,0,22.5', u'-22.5,22.5,0,33.75', u'-45,-11.25,-22.5,0',
+                              u'-45,-22.5,-22.5,-11.25', u'-45,-33.75,-22.5,-22.5', u'-45,0,-22.5,11.25',
+                              u'-45,11.25,-22.5,22.5', u'-45,22.5,-22.5,33.75', u'-67.5,-11.25,-45,0',
+                              u'-67.5,-22.5,-45,-11.25', u'-67.5,-33.75,-45,-22.5', u'-67.5,0,-45,11.25',
+                              u'-67.5,11.25,-45,22.5', u'-67.5,22.5,-45,33.75', u'0,-11.25,22.5,0',
+                              u'0,-22.5,22.5,-11.25', u'0,-33.75,22.5,-22.5', u'0,0,22.5,11.25', u'0,11.25,22.5,22.5',
+                              u'0,22.5,22.5,33.75', u'22.5,-11.25,45,0', u'22.5,-22.5,45,-11.25',
+                              u'22.5,-33.75,45,-22.5', u'22.5,0,45,11.25', u'22.5,11.25,45,22.5', u'22.5,22.5,45,33.75',
+                              u'45,-11.25,67.5,0', u'45,-22.5,67.5,-11.25', u'45,-33.75,67.5,-22.5', u'45,0,67.5,11.25',
+                              u'45,11.25,67.5,22.5', u'45,22.5,67.5,33.75'])
 
             actions = ActionChains(driver)
             actions.click(driver.find_element_by_xpath('//div[@title="Zoom in"]'))
@@ -182,7 +201,21 @@ class HomeTest(unittest.TestCase):
             time.sleep(1)
             server.wait_for(lambda: self.animationHasLoaded("ClusterAnimation"))
 
-            self.assertEqual(get_tiles(), [u'-11.25,-11.25,0,-5.625', u'-11.25,-16.875,0,-11.25', u'-11.25,-5.625,0,0', u'-11.25,0,0,5.625', u'-11.25,11.25,0,16.875', u'-11.25,5.625,0,11.25', u'-22.5,-11.25,-11.25,-5.625', u'-22.5,-16.875,-11.25,-11.25', u'-22.5,-5.625,-11.25,0', u'-22.5,0,-11.25,5.625', u'-22.5,11.25,-11.25,16.875', u'-22.5,5.625,-11.25,11.25', u'-33.75,-11.25,-22.5,-5.625', u'-33.75,-16.875,-22.5,-11.25', u'-33.75,-5.625,-22.5,0', u'-33.75,0,-22.5,5.625', u'-33.75,11.25,-22.5,16.875', u'-33.75,5.625,-22.5,11.25', u'0,-11.25,11.25,-5.625', u'0,-16.875,11.25,-11.25', u'0,-5.625,11.25,0', u'0,0,11.25,5.625', u'0,11.25,11.25,16.875', u'0,5.625,11.25,11.25', u'11.25,-11.25,22.5,-5.625', u'11.25,-16.875,22.5,-11.25', u'11.25,-5.625,22.5,0', u'11.25,0,22.5,5.625', u'11.25,11.25,22.5,16.875', u'11.25,5.625,22.5,11.25', u'22.5,-11.25,33.75,-5.625', u'22.5,-16.875,33.75,-11.25', u'22.5,-5.625,33.75,0', u'22.5,0,33.75,5.625', u'22.5,11.25,33.75,16.875', u'22.5,5.625,33.75,11.25'])
+            self.assertEqual(get_tiles(), [u'-11.25,-11.25,0,-5.625', u'-11.25,-16.875,0,-11.25', u'-11.25,-5.625,0,0',
+                                           u'-11.25,0,0,5.625', u'-11.25,11.25,0,16.875', u'-11.25,5.625,0,11.25',
+                                           u'-22.5,-11.25,-11.25,-5.625', u'-22.5,-16.875,-11.25,-11.25',
+                                           u'-22.5,-5.625,-11.25,0', u'-22.5,0,-11.25,5.625',
+                                           u'-22.5,11.25,-11.25,16.875', u'-22.5,5.625,-11.25,11.25',
+                                           u'-33.75,-11.25,-22.5,-5.625', u'-33.75,-16.875,-22.5,-11.25',
+                                           u'-33.75,-5.625,-22.5,0', u'-33.75,0,-22.5,5.625',
+                                           u'-33.75,11.25,-22.5,16.875', u'-33.75,5.625,-22.5,11.25',
+                                           u'0,-11.25,11.25,-5.625', u'0,-16.875,11.25,-11.25', u'0,-5.625,11.25,0',
+                                           u'0,0,11.25,5.625', u'0,11.25,11.25,16.875', u'0,5.625,11.25,11.25',
+                                           u'11.25,-11.25,22.5,-5.625', u'11.25,-16.875,22.5,-11.25',
+                                           u'11.25,-5.625,22.5,0', u'11.25,0,22.5,5.625', u'11.25,11.25,22.5,16.875',
+                                           u'11.25,5.625,22.5,11.25', u'22.5,-11.25,33.75,-5.625',
+                                           u'22.5,-16.875,33.75,-11.25', u'22.5,-5.625,33.75,0', u'22.5,0,33.75,5.625',
+                                           u'22.5,11.25,33.75,16.875', u'22.5,5.625,33.75,11.25'])
 
         except:
             name = os.path.realpath("ui_tests.test.test_zoom.png")
@@ -205,16 +238,15 @@ class HomeTest(unittest.TestCase):
 
         self.load_helpers()
 
-        for coord in [{"lat":0.7031073524364655,"lng":-43.59376},
-                      {"lat":0.5273363048114915,"lng":-38.583984375},
-                      {"lat":-0.08789059053082421,"lng":-35.5078125},
-                      {"lat":-0.615222552406841,"lng":-28.212890625},
-                      {"lat":-0.7909904981540058,"lng":-22.060546875},
-                      {"lat":-0.615222552406841,"lng":-17.314453125},
-                      {"lat":-0.08789059053082421,"lng":-11.6015625},
-                      {"lat":0.5273363048114915,"lng":-5.888671875},
-                      {"lat":0.6152225524068282,"lng":-1.7578125}]:
-            
+        for coord in [{"lat": 0.7031073524364655, "lng": -43.59376},
+                      {"lat": 0.5273363048114915, "lng": -38.583984375},
+                      {"lat": -0.08789059053082421, "lng": -35.5078125},
+                      {"lat": -0.615222552406841, "lng": -28.212890625},
+                      {"lat": -0.7909904981540058, "lng": -22.060546875},
+                      {"lat": -0.615222552406841, "lng": -17.314453125},
+                      {"lat": -0.08789059053082421, "lng": -11.6015625},
+                      {"lat": 0.5273363048114915, "lng": -5.888671875},
+                      {"lat": 0.6152225524068282, "lng": -1.7578125}]:
             point = self.latLng2Point(coord)
             self.assertEqual(self.getHover(point, "ArrowAnimation"), 20400)
 
@@ -228,14 +260,16 @@ class HomeTest(unittest.TestCase):
             self.setAnimation("ClusterAnimation")
 
             self.load_helpers()
-            point = self.latLng2Point({'lat':22.5, 'lng':0.0})
+            point = self.latLng2Point({'lat': 22.5, 'lng': 0.0})
 
             actions = ActionChains(driver)
-            actions.move_to_element_with_offset(driver.find_element_by_xpath("//div[@class='animations']/div/div/div[2]"), point['x'], point['y'])
+            actions.move_to_element_with_offset(
+                driver.find_element_by_xpath("//div[@class='animations']/div/div/div[2]"), point['x'], point['y'])
             actions.click()
             actions.perform()
 
-            server.wait_for(lambda: not server.is_element_present('//div[@id="vessel_identifiers"]//table//td[@class="vesselname" and text()="---"]'))
+            server.wait_for(lambda: not server.is_element_present(
+                '//div[@id="vessel_identifiers"]//table//td[@class="vesselname" and text()="---"]'))
             self.failUnless(server.is_element_present('//div[@id="vessel_identifiers"]//table//*[text()="27200"]'))
         except:
             name = os.path.realpath("ui_tests.test.test_home.png")
@@ -252,10 +286,11 @@ class HomeTest(unittest.TestCase):
             self.setAnimation("ClusterAnimation")
 
             self.load_helpers()
-            point = self.latLng2Point({'lat':22.5, 'lng':0.0})
+            point = self.latLng2Point({'lat': 22.5, 'lng': 0.0})
 
             actions = ActionChains(driver)
-            actions.move_to_element_with_offset(driver.find_element_by_xpath("//div[@class='animations']/div/div/div[2]"), point['x'], point['y'])
+            actions.move_to_element_with_offset(
+                driver.find_element_by_xpath("//div[@class='animations']/div/div/div[2]"), point['x'], point['y'])
             actions.click()
             actions.perform()
 

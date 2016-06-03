@@ -3,10 +3,13 @@ import BaseHTTPServer
 import threading
 import os.path
 
+
 class HTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     protocol_version = "HTTP/1.0"
+
     def log_message(self, *arg, **kw):
         pass
+
 
 def start(port):
     current_dir = os.path.dirname(__file__)
@@ -22,6 +25,6 @@ def start(port):
 
     return server
 
+
 def stop(server):
     server.shutdown()
-

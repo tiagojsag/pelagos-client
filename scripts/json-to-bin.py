@@ -32,8 +32,10 @@ print "Reading data..."
 with open(datafile) as f:
     data = json.load(f)
 
+
 def timestamp(data):
     return int(dateutil.parser.parse(data).strftime("%s"))
+
 
 print "Calculating header values..."
 
@@ -41,7 +43,7 @@ datalen = len(data)
 cols = {}
 coltypes = {}
 nrseries = 0;
-series = lambda : 1 # Not equal to anything that you can find in a json
+series = lambda: 1  # Not equal to anything that you can find in a json
 for i, d in enumerate(data):
     if d.get('series', None) != series:
         nrseries += 1;

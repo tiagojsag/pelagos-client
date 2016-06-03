@@ -10,7 +10,8 @@ import _tileset
 http = None
 driver = None
 
-def open(initialize_selenium = True, port=8000):
+
+def open(initialize_selenium=True, port=8000):
     global driver, http
 
     _tileset.generate_test_tileset()
@@ -19,12 +20,14 @@ def open(initialize_selenium = True, port=8000):
     if initialize_selenium:
         driver = _selenium.start()
 
+
 def close():
     try:
         if driver is not None:
             _selenium.stop(driver)
     finally:
         _server.stop(http)
+
 
 def wait_for(cond, max=120):
     for i in range(max):
@@ -42,12 +45,14 @@ def wait_for_load():
     wait_for(lambda: driver.find_element_by_xpath('//div[@class="loading"]').is_displayed())
     wait_for(lambda: not driver.find_element_by_xpath('//div[@class="loading"]').is_displayed())
 
+
 def is_element_present(what):
     try:
         driver.find_element_by_xpath(what)
     except selenium.common.exceptions.NoSuchElementException:
         return False
     return True
+
 
 @click.command()
 @click.option('-s', '--selenium', is_flag=True)
@@ -71,6 +76,7 @@ def main(selenium, port):
         console.interact()
     finally:
         close()
+
 
 if __name__ == "__main__":
     main()
