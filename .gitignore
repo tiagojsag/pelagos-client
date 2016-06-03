@@ -22,6 +22,7 @@ js/libs
 #*
 *.pyc
 ui_tests/data
+ui_tests/vectortile
 travis-data
 node_modules
 config.json

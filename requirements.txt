@@ -1,4 +1,3 @@
-vectortile
 selenium
 nose
 click

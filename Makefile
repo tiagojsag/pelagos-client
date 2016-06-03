@@ -72,6 +72,7 @@ prerequisites:
 	npm install -g testem
 	pip install --upgrade pip
 	pip install -r requirements.txt
+	git clone --depth=10 git@github.com:SkyTruth/vectortile.git ui_tests/vectortile
 
 unit-tests: dependencies
 	xvfb-run -a -s "-ac -screen 0 1280x1024x24" -l $(TESTEM_PATH)testem$(TESTEM_SUFFIX) ci

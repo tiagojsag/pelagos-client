@@ -1,7 +1,8 @@
 import sys
+import sys
+sys.path.append('vectortile')
 import os.path
 import vectortile
-import click
 import json
 import datetime
 
