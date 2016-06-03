@@ -10,6 +10,10 @@ class HTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def log_message(self, *arg, **kw):
         pass
 
+    def end_headers(self):
+        self.send_header('Access-Control-Allow-Origin', '*')
+        SimpleHTTPServer.SimpleHTTPRequestHandler.end_headers(self)
+
 
 def start(port):
     current_dir = os.path.dirname(__file__)
