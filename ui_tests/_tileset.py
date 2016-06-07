@@ -1,10 +1,11 @@
 import sys
-import sys
+
 sys.path.append('vectortile')
 import os.path
 import vectortile
 import json
 import datetime
+import random
 
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 DEFAULT_EXTENT = 1000. * 60. * 60. * 24. * 30
@@ -18,7 +19,7 @@ def datetime2timestamp(d):
 def generate_test_tileset():
     current_dir = os.path.dirname(__file__)
     test_tiles_dir = os.path.join(current_dir, 'data/testtiles')
-    generate_tileset(test_tiles_dir, levels=3)
+    generate_tileset(test_tiles_dir, levels=2)
 
 
 last_series = 0
@@ -46,25 +47,13 @@ def generate_tile(outdir, bounds, series_group, tile_bounds=None, time_range=Non
 
     bbox = bounds.get_bbox()
     data = []
-    points = 100
+    points = 100000
     for idx in xrange(0, points):
         data.append({
             "seriesgroup": series_group,
             "series": last_series,
-            "longitude": bbox.lonmin,
-            "latitude": idx * (bbox.latmax - bbox.latmin) / float(points) + bbox.latmin,
-            "datetime": time_range[0] + idx * time_len / float(points),
-            "weight": 20.0,
-            "sog": 20,
-            "cog": 360.0 * round(8 * idx / float(points)) / 8.0,
-            "sigma": 0.0})
-        last_series += 1
-    for idx in xrange(0, points):
-        data.append({
-            "seriesgroup": series_group,
-            "series": last_series,
-            "longitude": idx * (bbox.lonmax - bbox.lonmin) / float(points) + bbox.lonmin,
-            "latitude": bbox.latmin,
+            "longitude": (bbox.lonmax - (bbox.lonmin * float(random.random()))),
+            "latitude":  (bbox.latmax - (bbox.latmin * float(random.random()))),
             "datetime": time_range[0] + idx * time_len / float(points),
             "weight": 20.0,
             "sog": 20,
@@ -241,7 +230,7 @@ def generate_tileset(outdir, levels=None, start=EPOCH, extent=DEFAULT_EXTENT, co
             callsign="SE%s" % series_group,
             vesselname=["Oden", "Tor", "Frej", "Loke", "Balder", "Freja", "Mimer"][series_group % 7])
 
-        if count != None:
+        if count is not None:
             for i in xrange(0, count):
                 time_range = (datetime.datetime.utcfromtimestamp(datetime2timestamp(start) + extent * i / 1000.),
                               datetime.datetime.utcfromtimestamp(datetime2timestamp(start) + extent * (i + 1) / 1000.))
