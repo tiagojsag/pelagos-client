@@ -46,13 +46,13 @@ def generate_tile(outdir, bounds, series_group, tile_bounds=None, time_range=Non
 
     bbox = bounds.get_bbox()
     data = []
-    points = 100000
+    points = 31250
     for idx in xrange(0, points):
         data.append({
             "seriesgroup": series_group,
             "series": last_series,
-            "longitude": (bbox.lonmax - (bbox.lonmin * float(random.random()))),
-            "latitude":  (bbox.latmax - (bbox.latmin * float(random.random()))),
+            "longitude": random.uniform(bbox.lonmax, bbox.lonmin),
+            "latitude":  random.uniform(bbox.latmax, bbox.latmin),
             "datetime": time_range[0] + idx * time_len / float(points),
             "weight": 20.0,
             "sog": 20,
