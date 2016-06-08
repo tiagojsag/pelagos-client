@@ -1,5 +1,4 @@
 import sys
-
 sys.path.append('vectortile')
 import os.path
 import vectortile

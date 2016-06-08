@@ -6,6 +6,7 @@ import selenium.common.exceptions
 import _server
 import _selenium
 import _tileset
+import socket
 
 http = None
 driver = None
@@ -62,8 +63,13 @@ def main(selenium, port):
 
     open(initialize_selenium=selenium, port=port)
 
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("gmail.com", 80))
+    ip = s.getsockname()[0]
+    s.close()
+
     print "The application is now running."
-    print "You can access a sample workspace at http://localhost:%s/index.html?workspace=/ui_tests/data/testtiles/workspace" % port
+    print "You can access a sample workspace at http://%s:%s/index.html?workspace=/ui_tests/data/testtiles/workspace" % (ip, port)
     print "You can exit by entering exit() or Ctrl-D in the REPL below"
 
     try:
