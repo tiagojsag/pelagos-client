@@ -2,6 +2,11 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+if [ ! -d "$DIR/js/libs" ]; then
+    npm install bower
+    node_modules/.bin/bower install
+fi
+
 if [ ! -d "$DIR/ui_tests/vectortile" ]; then
     git clone --depth=10 git@github.com:SkyTruth/vectortile.git ui_tests/vectortile
 fi
