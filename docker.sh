@@ -7,4 +7,4 @@ if [ ! -d "$DIR/ui_tests/vectortile" ]; then
 fi
 
 docker build -t pelagos .
-docker run -p 8000 -v $DIR:/opt/pelagos-client -it pelagos
+docker run -p 8000:8000 -v $DIR:/opt/pelagos-client -it pelagos
