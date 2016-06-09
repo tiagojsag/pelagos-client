@@ -12,5 +12,5 @@ RUN pip install nose click docopt python-geohash unittest2 selenium
 
 WORKDIR /opt/pelagos-client/ui_tests
 
-EXPOSE 8000
+EXPOSE 8000:8000
 ENTRYPOINT python server.py
